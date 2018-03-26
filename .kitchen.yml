@@ -1,0 +1,54 @@
+---
+driver:
+  name: ec2
+  security_group_ids: ["sg-53290d2d"]
+  region: us-east-1
+  instance_type: t2.large
+  aws_ssh_key_id: GitLabCI_Runner
+  subnet_id: subnet-57846b1f
+  retryable_sleep: 5
+  retryable_tries: 360
+  associate_public_ip: false
+  tags: {
+    Name: "TestKit-br_oracle_client_windows2016",
+    Owner: "TBD",
+    Account Code: "TBD",
+    Dept: "TBD"
+   }
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: true
+  install_msi_url: https://nexus.devops.broadridge.net/repository/3rdParty_RAW/chef-client-13.6.4-1-x64.msi
+  chef_client_path: 'c:\opscode\chef\embedded\bin\chef-client.bat'
+  root_path: 'C:\chef'
+
+transport:
+  name: winrm
+  ssh_key: /home/ec2-user/GitLabCI_Runner.pem
+  retryable_tries: 200
+  retryable_sleep: 8
+  connection_timeout: 90
+  # elevated: true
+  username: Administrator
+  password:
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: windows-2016r2
+    driver:
+      image_id: ami-603b1c1a
+    driver_config:
+      log_level: debug
+      guest: windows
+      communicator: 'winrm'
+
+suites:
+  - name: default
+    run_list:
+      - recipe[br_oracle_client_windows2016::default]
+    attributes:
+    verifier:
+      inspec_tests:
+        - test/smoke/default
