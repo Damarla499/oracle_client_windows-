@@ -1,1 +1,32 @@
-# oracle_client_windows-
+#
+# Cookbook Name:: br_CA_Introscope_Agent
+# Recipe:: default
+#
+# Copyright company. Do Not Distribute.
+directory 'C:\\oracle\\ver12' do
+  action :create
+  recursive true
+end
+remote_file 'C:\\oracle\\winx64_12201_client.zip' do
+  source node['br_oracle_client_windows2016']['package_url']
+  action :create
+end
+powershell_script 'unzip' do
+  code <<-EOH
+    $sourceFile = 'C:\\oracle\\winx64_12201_client.zip'
+    $targetFolder = 'C:\\oracle\\'
+    [System.Reflection.Assembly]::LoadWithPartialName('System.IO.Compression.FileSystem')
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($sourceFile, $targetFolder)
+  EOH
+  not_if 'dir C:\\oracle\\client'
+end
+cookbook_file 'C:\\oracle\\client\\client.rsp' do
+  source 'client.rsp'
+  action :create
+end
+execute 'install oracle client' do
+  command 'C:\\oracle\\client\\setup.exe -waitforcompletion -silent "ORACLE_BASE=C:\\oracle" "ORACLE_HOME=C:\\oracle\\ver12" "oracle.install.IsBuiltInAccount=true" "INSTALL_TYPE=Administrator" "oracle.installer.autoupdates.option=SKIP_UPDATES"'
+  # cwd "C:\\oracle\\client"
+  # timeout 600
+  action :run
+end
