@@ -1,0 +1,1 @@
+default['br_oracle_client_windows2016']['package_url'] = 'https://nexus.devops.b.net/repository/3rdParty_RAW/oracle/client/12.2.0.1/winx64_12201_client.zip'
