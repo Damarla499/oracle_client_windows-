@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: br_CA_Introscope_Agent
+# Cookbook Name:: oracle_client_DB
 # Recipe:: default
 #
 # Copyright company. Do Not Distribute.
@@ -8,7 +8,7 @@ directory 'C:\\oracle\\ver12' do
   recursive true
 end
 remote_file 'C:\\oracle\\winx64_12201_client.zip' do
-  source node['br_oracle_client_windows2016']['package_url']
+  source node['Ph_oracle_client_windows2016']['package_url']
   action :create
 end
 powershell_script 'unzip' do
